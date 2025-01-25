@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 配置Mabatis映射文件 -->
+<mapper namespace="com.dao.ItemsDAO">
+	<resultMap type="items" id="itemsMap">
+		<id property="itemsid" column="itemsid" />
+		<result property="ordercode" column="ordercode" />
+		<result property="goodsid" column="goodsid" />
+		<result property="num" column="num" />
+		<result property="price" column="price" />
+		<result property="goodsname" column="goodsname" />
+	</resultMap>
+	<!-- 插入语句 DAO通过id调用此配置 -->
+	<insert id="insertItems" parameterType="items">
+		insert into items(itemsid , ordercode , goodsid , num , price )
+		values(#{itemsid} , #{ordercode} , #{goodsid} , #{num} , #{price} )
+	</insert>
+	<!-- 更新语句 DAO通过id调用此配置 -->
+	<update id="updateItems" parameterType="items">
+		update items set ordercode=#{ordercode} , goodsid=#{goodsid} , num=#{num} ,
+		price=#{price} where itemsid=#{itemsid}
+	</update>
+	<!-- 按主键删除 DAO通过id调用此配置 -->
+	<delete id="deleteItems" parameterType="String">
+		delete from items where itemsid = #{itemsid}
+	</delete>
+	<!-- 查询全部信息 DAO通过id调用此配置 -->
+	<select id="getAllItems" resultMap="itemsMap">
+		select a.* , b.goodsname from items a , goods b where 1=1 and a.goodsid =
+		b.goodsid order by itemsid desc
+	</select>
+	<!-- 按主键查询 DAO通过id调用此配置 -->
+	<select id="getItemsById" parameterType="String" resultMap="itemsMap">
+		select a.* , b.goodsname from items a , goods b where 1=1 and
+		a.goodsid = b.goodsid and itemsid=#{itemsid} order by itemsid desc
+	</select>
+	<!-- 按条件精确查询 DAO通过id调用此配置 -->
+	<select id="getItemsByCond" parameterType="items" resultMap="itemsMap">
+		select a.* , b.goodsname from items a , goods b where 1=1 and
+		a.goodsid = b.goodsid
+		<if test="ordercode != null and '' != ordercode">
+			and a.ordercode = #{ordercode}
+		</if>
+		<if test="goodsid != null and '' != goodsid">
+			and a.goodsid = #{goodsid}
+		</if>
+		<if test="num != null and '' != num">
+			and a.num = #{num}
+		</if>
+		<if test="price != null and '' != price">
+			and a.price = #{price}
+		</if>
+	</select>
+	<!-- 按条件模糊查询 DAO通过id调用此配置 -->
+	<select id="getItemsByLike" parameterType="items" resultMap="itemsMap">
+		select a.* , b.goodsname from items a , goods b where 1=1 and
+		a.goodsid = b.goodsid
+		<if test="ordercode != null and '' != ordercode">
+			and a.ordercode like CONCAT('%', CONCAT(#{ordercode}, '%'))
+		</if>
+		<if test="goodsid != null and '' != goodsid">
+			and a.goodsid like CONCAT('%', CONCAT(#{goodsid}, '%'))
+		</if>
+		<if test="num != null and '' != num">
+			and a.num like CONCAT('%', CONCAT(#{num}, '%'))
+		</if>
+		<if test="price != null and '' != price">
+			and a.price like CONCAT('%', CONCAT(#{price}, '%'))
+		</if>
+	</select>
+</mapper>
+
+
